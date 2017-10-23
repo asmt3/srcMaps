@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.12/js/adal.min.js"></script>
+<script>
+  var ADAL = new AuthenticationContext({
+      instance: 'https://login.microsoftonline.com/',
+      tenant: 'common', //COMMON OR YOUR TENANT ID
+      clientId: '4eb4969b-b761-4816-9cb7-16bb683684c4',
+      redirectUri: 'http://localhost:8443/.auth/login/done', //This is your redirect URI
+      callback: userSignedIn,
+      popUp: true
+  });
+
+  function signIn() {
+      ADAL.login();
+  }
+
+  function userSignedIn(err, token) {
+      if (!err) {
+          showWelcomeMessage();
+      }
+      else {
+          console.error("error: " + err);
+      }
+  }
+
+  function showWelcomeMessage() {
+      var user = ADAL.getCachedUser();
+      var divWelcome = document.getElementById('WelcomeMessage');
+      divWelcome.innerHTML = "Welcome " + user.profile.name;
+      console.log(`Hello ${user.profile.name}. Welcome to maps.`);
+  }
+
+</script>
+
+<script>
+
+function getdata() {
+    console.log("Starting")
+    const url = 'http://prompt.intalert.org/forms/travelapplications/search';
+    // The data we are going to send in our request
+    let somedata = {
+        applicant_o365_object_id:-1,  
+        contact_o365_object_id:-1,
+        date:-1,
+        destination_territory_id:-1
+    };
+    fetch(url, {
+        method: 'post',
+        mode: 'no-cors',
+        headers: {
+            'Content-type':'application/json'
+        },
+        body: JSON.stringify(somedata)
+    })
+    .then(response => console.log(response))
+    .catch(error => console.log('error is', error));
+};
+</script>
+</head>
+<body>
+    <button id="SignIn" onclick="signIn()">Sign In</button>
+    <h4 id="WelcomeMessage"></h4>
+    <p>So, here goes...</p>
+    <button onclick="getdata()">Go go go</button>
+    <div id="cont" width="400" height="200" border="1">
+        <p> Data </p>
+    </div>
+</body>
+</html>
